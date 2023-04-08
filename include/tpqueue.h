@@ -2,14 +2,76 @@
 #ifndef INCLUDE_TPQUEUE_H_
 #define INCLUDE_TPQUEUE_H_
 
-template<typename T, int size>
-class TPQueue {
-  // реализация шаблона очереди с приоритетом на кольцевом буфере
-};
+#include <cassert>
 
 struct SYM {
   char ch;
   int prior;
+};
+
+template<typename T, int size>
+class TPQueue {
+private:
+  T* arr;
+  int sizeQ;
+  int first, last;
+  int count;
+  
+public:
+  TPQueue():sizeQ(size), first(0), last(0), count(0) {
+    arr = new T[sizeQ + 1];
+  }
+
+  ~TPQueue() {
+    delete[] arr;
+  }
+
+  void push(const T& value) {
+    assert(count < sizeQ);
+    if (count == 0) {
+      arr[last++] = value;
+      count++;
+    } else {
+      int i = last - 1;
+      bool flag = 0;
+      while (i >= first && value.prior > arr[i].prior) {
+        flag = 1;
+        arr[i + 1] = arr[i];
+        arr[i] = value;
+        i--;
+      }
+      if (flag == 0) {
+        arr[last] = value;
+      }
+      last++;
+      count++;
+    }
+    if (last > sizeQ) {
+      last -= sizeQ + 1;
+    }
+  }
+
+  const T& pop() {
+    assert(count > 0);
+    count--;
+    if (first > sizeQ) {
+      first -= sizeQ + 1;
+    }
+    return arr[first++];
+  }
+
+  char get() {
+    assert(count > 0);
+    return arr[first].ch;
+  }
+
+  bool isFull() const {
+    return count == sizeQ;
+  }
+
+  bool isEmpty() const {
+    return count == 0;
+  }
 };
 
 #endif  // INCLUDE_TPQUEUE_H_
