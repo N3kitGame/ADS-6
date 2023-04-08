@@ -11,13 +11,13 @@ struct SYM {
 
 template<typename T, int size>
 class TPQueue {
-private:
+ private:
   T* arr;
   int sizeQ;
   int first, last;
   int count;
-  
-public:
+
+ public:
   TPQueue():sizeQ(size), first(0), last(0), count(0) {
     arr = new T[sizeQ + 1];
   }
